@@ -1,3 +1,4 @@
+# A class to install runkit7 in Chassis.
 class runkit7 (
   $config,
   $php_version  = $config[php]
@@ -9,14 +10,14 @@ class runkit7 (
   }
   if ! defined(Package['php-pear'] ) {
     package { 'php-pear':
-      ensure => $package,
+      ensure  => $package,
       require => Package["php${php_version}-fpm", "php${php_version}-cli"],
       notify  => Service["php${php_version}-fpm"],
     }
   }
   if ! defined(Package['php-xml'] ) {
     package { 'php-xml':
-      ensure => $package,
+      ensure  => $package,
       require => Package["php${php_version}-fpm", "php${php_version}-cli"],
       notify  => Service["php${php_version}-fpm"],
     }
