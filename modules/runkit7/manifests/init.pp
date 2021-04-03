@@ -21,15 +21,15 @@ class runkit7 (
       notify  => Service["php${php_version}-fpm"],
     }
   }
-  if ! defined( Package["${php_version}-dev"] ) {
-    package { "${php_version}-dev":
+  if ! defined( Package["php${php_version}-dev"] ) {
+    package { "php${php_version}-dev":
       ensure  => $package,
       require => Package["php${php_version}-fpm", "php${php_version}-cli"]
     }
   }
   exec { 'install runkit7':
     command => 'pecl install runkit7-alpha',
-    require => Package['php-pear', "${php_version}-dev", 'php-xml', "php${php_version}-fpm", "php${php_version}-cli" ],
+    require => Package['php-pear', "php${php_version}-dev", 'php-xml', "php${php_version}-fpm", "php${php_version}-cli" ],
     path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ],
     notify  => Service["php${php_version}-fpm"],
     unless  => 'pecl info runkit7'
