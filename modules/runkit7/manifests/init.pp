@@ -5,8 +5,10 @@ class runkit7 (
 ) {
   if ( ! empty( $config[disabled_extensions] ) and 'chassis/runkit7' in $config[disabled_extensions] ) {
     $package = absent
+    $file = absent
   } else {
     $package = latest
+    $file = present
   }
   if ! defined(Package['php-pear'] ) {
     package { 'php-pear':
@@ -34,5 +36,18 @@ class runkit7 (
     path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ],
     notify  => Service["php${php_version}-fpm"],
     unless  => 'pecl info runkit7'
+  }
+
+  file { "/etc/php/${php_version}/fpm/conf.d/runkit7.ini":
+    ensure  => $file,
+    content => template('runkit7/runkit7.ini.erb'),
+    notify  => Service["php${php_version}-fpm"],
+    require => Package["php${php_version}-fpm"]
+  }
+
+  file { "/etc/php/${php_version}/cli/conf.d/runkit7.ini":
+    ensure  => $file,
+    content => template('runkit7/runkit7.ini.erb'),
+    require => Package["php${php_version}-cli"]
   }
 }
