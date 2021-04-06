@@ -30,12 +30,23 @@ class runkit7 (
       require => Package["php${php_version}-fpm", "php${php_version}-cli"]
     }
   }
+
   exec { 'install runkit7':
     command => 'pecl install runkit7-alpha',
-    require => Package['php-pear', "php${php_version}-dev", 'php-xml', "php${php_version}-fpm", "php${php_version}-cli" ],
+    require => [
+      Package['php-pear', "php${php_version}-dev", 'php-xml', "php${php_version}-fpm", "php${php_version}-cli"],
+      Exec['uninstall runkit7']
+      ],
     path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ],
-    notify  => Service["php${php_version}-fpm"],
-    unless  => 'pecl info runkit7'
+    notify  => Service["php${php_version}-fpm"]
+  }
+
+  # We need to do this for PHP version switching.
+  exec { 'uninstall runkit7':
+    command => 'pecl uninstall runkit7-alpha',
+    require => Package['php-pear', "php${php_version}-dev", 'php-xml', "php${php_version}-fpm", "php${php_version}-cli"],
+    path    => [ '/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/' ],
+    notify  => Service["php${php_version}-fpm"]
   }
 
   file { "/etc/php/${php_version}/fpm/conf.d/runkit7.ini":
